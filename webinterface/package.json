@@ -1,0 +1,15 @@
+{
+  "name": "co2-server-webinterface",
+  "version": "1.0.0",
+  "description": "Webinterface frontend files for the CO2-Sensors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RodneyMKay/CO2-Sensors.git"
+  },
+  "author": "RodneyMKay",
+  "license": "GNU GPL v3",
+  "bugs": {
+    "url": "https://github.com/RodneyMKay/CO2-Sensors/issues"
+  },
+  "homepage": "https://github.com/RodneyMKay/CO2-Sensors#readme"
+}
