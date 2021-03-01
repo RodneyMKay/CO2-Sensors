@@ -12,5 +12,9 @@
   "bugs": {
     "url": "https://github.com/RodneyMKay/CO2-Sensors/issues"
   },
-  "homepage": "https://github.com/RodneyMKay/CO2-Sensors#readme"
+  "homepage": "https://github.com/RodneyMKay/CO2-Sensors#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "influxdb-nodejs": "^3.1.0"
+  }
 }
