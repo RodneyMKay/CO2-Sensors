@@ -8,6 +8,6 @@ The CO2-Sensors are implemented through CO2-Sensors hooked up to small arduino b
 .
 ├── webserver         # Backend server of the webinterface
 ├── webbinterface     # Frontend of the webinterface
-├── LICENSE
-└── README
+├── LICENSE.md
+└── README.md
 ```
