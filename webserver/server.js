@@ -1,12 +1,18 @@
 const mqttInterface = require('./mqttInterface');
 const webserver = require('./webserver');
+const sql = require('./sql');
 
-console.log('[*] Starting MQTT interface...');
+console.log('[*] Setting up database...');
 
-mqttInterface()
+sql.init();
+sql.createTables();
 
-console.log('[*] Starting webserver...');
+console.log("[*] Database ready!");
 
-webserver()
+mqttInterface.start().then(() => {
+    console.log('[*] MQTT interface started!');
+});
 
-console.log('[*] CO2-Sensor project server running!');
+webserver.start().then(port => {
+    console.log(`[*] CO2-Sensor project server running on port ${port}!`);
+});
