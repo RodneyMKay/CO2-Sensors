@@ -104,4 +104,4 @@ dist
 .tern-port
 
 .idea/
-webserver/secrets.js
+webserver/credentials.js

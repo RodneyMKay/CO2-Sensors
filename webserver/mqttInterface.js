@@ -1,30 +1,31 @@
 const mqtt = require('mqtt');
 const cryptoJS = require('crypto-js');
 
-const secrets = require('./secrets')
-
-brokerAddr = "10.5.1.100:1883";
-
-const client = mqtt.connect('mqtt:' + brokerAddr);
+const credentials = require('./credentials')
+const config = require('./config')
 
 function checkHMACMessage(data, hmac, secret) {
     return hmac === cryptoJS.HmacSHA256(data, secret).toString();
 }
 
-client.on('connect', () => {
-    client.subscribe('nodes/#')
-});
+module.exports = function () {
+    const client = mqtt.connect('mqtt:' + config.brokerAddress);
 
-client.on('message', (topic, message) => {
-    let splittopic = topic.split("/");
-    let splitmessage = message.toString().split("$");
+    client.on('connect', () => {
+        client.subscribe('nodes/#')
+    });
 
-    if (splitmessage.length === 2 && splittopic.length === 4) {
-        if (checkHMACMessage(splitmessage[0], splitmessage[1], secrets.sha256hmacSecret)) {
-            console.log(topic + ": " + message + " VALID");
-        } else {
-            console.log(topic + ": " + message + " INVALID");
+    client.on('message', (topic, message) => {
+        let splittopic = topic.split("/");
+        let splitmessage = message.toString().split("$");
+
+        if (splitmessage.length === 2 && splittopic.length === 4) {
+            if (checkHMACMessage(splitmessage[0], splitmessage[1], credentials.sha256hmacSecret)) {
+                console.log(topic + ": " + message + " VALID");
+            } else {
+                console.log(topic + ": " + message + " INVALID");
+            }
+
         }
-
-    }
-});
+    });
+}
