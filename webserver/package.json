@@ -2,7 +2,11 @@
   "name": "co2-server-webserver",
   "version": "1.0.0",
   "description": "Webserver for serving the webinterface for the CO2-Sensors",
-  "main": "server.js",
+  "scripts": {
+    "build": "npm run build --prefix ../webinterface",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RodneyMKay/CO2-Sensors.git"
@@ -21,5 +25,8 @@
     "mqtt": "^4.2.6",
     "path": "^0.12.7",
     "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }
