@@ -105,3 +105,4 @@ dist
 
 .idea/
 webserver/credentials.js
+data.sqlite
