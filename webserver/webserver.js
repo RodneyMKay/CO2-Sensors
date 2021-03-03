@@ -89,7 +89,7 @@ app.post('/api/user/login', handleAsync(async (req, res) => {
 
     const user = await sql.getUser(username);
 
-    if (user/* && user.password === password*/) {
+    if (user && user.password === password) {
         req.session.user = user;
         res.json(user);
     } else {
