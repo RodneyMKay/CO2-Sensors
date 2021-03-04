@@ -52,10 +52,17 @@ module.exports = {
             db.run("CREATE TABLE IF NOT EXISTS data (csid INTEGER, time DATE, serverId INTEGER, valueType INTEGER, PRIMARY KEY(csid, time))");
             db.run("CREATE TABLE IF NOT EXISTS user (userid INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR NOT NUll, password VARCHAR, permissionLevel INTEGER)");
         });
-        this.createTestSensors(); // TODO: remove
+        this.createTestData(); // TODO: remove
     },
-    createTestSensors: function() {
+    createTestData: function() {
         let sensors = ['CCS811', 'BME280', 'BME680'];
+        let clients = [
+            {"mqttID": 1, "name": "A204"},
+            {"mqttID": 2, "name": "A205"},
+            {"mqttID": 3, "name": "A206"},
+            {"mqttID": 4, "name": "A207"},
+            {"mqttID": 5, "name": "A208"},
+        ];
         db.serialize(() => {
             db.run("DELETE FROM sensor WHERE 1=1");
             db.run("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'sensor'");
@@ -63,12 +70,17 @@ module.exports = {
             sensors.forEach((sensor) => {
                 db.run("INSERT INTO sensor (name) VALUES ('" + sensor + "')");
             })
-            // db.run("INSERT INTO sensor (name) VALUES ('CCS811'), ('BME680')");
-            //  db.run("INSERT INTO client name");
+
+
+            db.run("DELETE FROM client WHERE 1=1");
+            db.run("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'client'");
+            clients.forEach((client) => {
+                db.run("INSERT INTO client (mqttId, name) VALUES ('" + client.mqttID + "', '" + client.name + "')");
+            })
         });
     },
     getUser: function (username) {
-        return queryOne("SELECT * FROM user WHERE username = ?", username);
+        return queryOne("SELECT * FROM user  WHERE username = ?", username);
     },
     listClients: function () {
         return queryMultiple("SELECT * FROM client");
