@@ -46,7 +46,7 @@ module.exports = {
     },
     createTables: function () {
         db.serialize(() => {
-            db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(256))");
+            db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttID INTEGER, name VARCHAR(256))");
             db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(256))");
             db.run("CREATE TABLE IF NOT EXISTS client_sensor (csid INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorId INTEGER, valueType INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS data (csid INTEGER, time DATE, serverId INTEGER, valueType INTEGER, PRIMARY KEY(csid, time))");
