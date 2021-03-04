@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <ClientChooser v-bind:sensors="sensors" @selected="selectHandler"></ClientChooser>
+    <ClientChooser v-if="showClientChooser" v-bind:sensors="sensors" @selected="selectHandler"></ClientChooser>
   </div>
 </template>
 
@@ -13,20 +13,25 @@ export default {
     ClientChooser
   }, data: function () {
     return {
-      sensors: ['loading']
+      sensors: ['loading'],
+      showClientChooser: true
     }
 
   }, methods: {
-    selectHandler (value) {
+    selectHandler(value) {
       console.log("selected " + value);
-
+      this.showClientChooser = false;
     }
   }, created() {
-    fetch("/api/sensors/list", {
+    fetch("/api/clients/list", {
           method: "POST"
         }
-    ).then(response => response.json()).then(data => {
-      this.sensors = data;
+    ).then(response => {
+      if (response.ok) {
+        response.json().then( data => {
+          this.sensors = data;
+        })
+      }
     })
   }
 }
