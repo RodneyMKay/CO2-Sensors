@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-
-    <SensorChooser v-bind:sensors="sensors"></SensorChooser>
+    <SensorChooser v-bind:sensors="sensors" @selected="selectHandler"></SensorChooser>
   </div>
 </template>
 
@@ -14,18 +13,19 @@ export default {
     SensorChooser
   }, data: function () {
     return {
-      sensors: ['name', 'name2']
+      sensors: ['loading']
     }
-  },
-  created() {
+
+  }, methods: {
+    selectHandler (value) {
+      console.log("selected " + value);
+
+    }
+  }, created() {
     fetch("/api/sensors/list", {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          }
+          method: "POST"
         }
     ).then(response => response.json()).then(data => {
-      console.log('Success:', data);
       this.sensors = data;
     })
   }
