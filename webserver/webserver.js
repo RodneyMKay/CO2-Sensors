@@ -104,9 +104,14 @@ app.post('/api/user/logout', handleAsync(async (req, res) => {
     res.json(user);
 }));
 
+
 // ----------------------
 // Sensors
-
+app.post('/api/sensors/list', handleAsync(async (req, res) => {
+    sql.listSensors().then((sensors) => {
+        res.json(sensors);
+    });
+}));
 
 // ----------------------
 // Clients
