@@ -115,7 +115,11 @@ app.post('/api/sensors/list', handleAsync(async (req, res) => {
 
 // ----------------------
 // Clients
-
+app.post('/api/clients/list', handleAsync(async (req, res) => {
+    sql.listClients().then((clients) => {
+        res.json(clients);
+    });
+}));
 
 // ----------------------
 // Data
