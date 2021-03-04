@@ -2,8 +2,8 @@
   <div class="SensorChooser">
     <select name="Sensors" >
       <option v-for="sensor in sensors"
-              :key="sensor">
-        {{sensor}}
+              :key="sensor.id">
+        {{sensor.name}}
       </option>
     </select>
   </div>
