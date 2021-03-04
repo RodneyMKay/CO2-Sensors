@@ -16,18 +16,20 @@ export default {
     return {
       sensors: ['name', 'name2']
     }
+  },
+  created() {
+    fetch("/api/sensors/list", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+    ).then(response => response.json()).then(data => {
+      console.log('Success:', data);
+      this.sensors = data;
+    })
   }
 }
-
-fetch("/api/sensors/list", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    }
-).then(response => response.json()).then(data => {
-  console.log('Success:', data);
-})
 
 </script>
 
