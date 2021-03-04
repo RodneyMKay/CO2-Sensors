@@ -1,6 +1,6 @@
 <template>
   <div class="SensorChooser">
-    <select class="sensor-select" v-model="selected">
+    <select class="client-select" v-model="selected">
       <option>Bitte wählen sie einen Sensor</option>
       <option v-for="sensor in sensors"
               :key="sensor.id">
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "SensorChooser",
+  name: "ClientChooser",
   props: {
     'sensors': Array
 
@@ -36,8 +36,8 @@ export default {
 }
 </script>
 
-<style scoped>
-.sensor-select {
-/ / display: none;
+<style>
+.client-select {
+  //display: none;
 }
 </style>

@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <SensorChooser v-bind:sensors="sensors" @selected="selectHandler"></SensorChooser>
+    <ClientChooser v-bind:sensors="sensors" @selected="selectHandler"></ClientChooser>
   </div>
 </template>
 
 <script>
-import SensorChooser from "@/components/SensorChooser";
+import ClientChooser from "@/components/ClientChooser";
 
 export default {
   name: 'App',
   components: {
-    SensorChooser
+    ClientChooser
   }, data: function () {
     return {
       sensors: ['loading']
