@@ -30,10 +30,10 @@ function handleAsync(handler) {
         handler(req, res).catch(error => {
             if (error instanceof HTTPError) {
                 res.status(error.statusCode);
-                res.json({error: {code: error.statusCode, message: error.message}});
+                res.json({error: {status: error.statusCode, message: error.message}});
             } else {
                 res.status(500);
-                res.json({error: {code: 500, message: error.toString()}});
+                res.json({error: {status: 500, message: error.toString()}});
             }
         });
     }
@@ -57,13 +57,13 @@ function requirePermission(req, permissionLevel) {
 // Setup server
 
 const app = express();
-app.use('/api/*', bodyParser.json());
-app.use('/api/*', bodyParser.urlencoded({extended: true}));
-app.use('/api/*', session({
+app.use('/api/v1/*', bodyParser.json());
+app.use('/api/v1/*', bodyParser.urlencoded({extended: true}));
+app.use('/api/v1/*', session({
     secret: credentials.sessionSecret,
     resave: false,
     saveUninitialized: true,
-//    cookie: { secure: true }
+    cookie: { secure: true }
 }));
 
 // ----------------------
@@ -72,14 +72,14 @@ app.use('/api/*', session({
 app.use('/', express.static(path.join(__dirname, '../webinterface/dist/')));
 
 // ----------------------
-// User api
+// Auth api
 
-app.get('/api/user', handleAsync(async (req, res) => {
+app.get('/api/v1/auth/currentUser', handleAsync(async (req, res) => {
     requirePermission(req, 1);
     res.json(req.session.user);
 }));
 
-app.post('/api/user/login', handleAsync(async (req, res) => {
+app.post('/api/v1/auth/login', handleAsync(async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -97,7 +97,7 @@ app.post('/api/user/login', handleAsync(async (req, res) => {
     }
 }));
 
-app.post('/api/user/logout', handleAsync(async (req, res) => {
+app.post('/api/v1/auth/logout', handleAsync(async (req, res) => {
     requirePermission(req, 1);
     const user = req.session.user;
     req.session.user = null;
@@ -105,8 +105,36 @@ app.post('/api/user/logout', handleAsync(async (req, res) => {
 }));
 
 // ----------------------
+// User api
+
+app.get('/api/user/current', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+    res.json(req.session.user);
+}));
+
+app.post('/api/user/login', handleAsync(async (req, res) => {
+}));
+
+app.post('/api/user/logout', handleAsync(async (req, res) => {
+}));
+
+// ----------------------
 // Sensors
 
+app.get('/api/sensor', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.get('/api/sensor/:sensorId', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.get('/api/sensor/add', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
 
 // ----------------------
 // Clients
