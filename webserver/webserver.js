@@ -109,52 +109,64 @@ app.post('/api/v1/auth/logout', handleAsync(async (req, res) => {
 // Clients
 
 app.get('/api/v1/clients', handleAsync(async (req, res) => {
-
+    res.json(await sql.listClients())
 }));
 
 app.post('/api/v1/clients', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageClients);
-
+    // TODO
 }));
 
 app.get('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
+    const client = await sql.getClient(parseInt(req.params.clientId));
 
+    if (client) {
+        res.json(client);
+    } else {
+        throw new HTTPError(404, "Client with the specified id not found!");
+    }
 }));
 
 app.put('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageClients);
-
+    // TODO
 }));
 
 app.delete('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageClients);
-
+    // TODO
 }));
 
 // ----------------------
 // Clients -> Sensors
 
 app.get('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
-
+    res.json(sql.listSensors(parseInt(req.params.clientId)));
 }));
 
 app.post('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
-
+    // TODO
 }));
 
 app.get('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
+    const sensor = await sql.getSensor(parseInt(req.params.clientId), parseInt(req.params.sensorId));
 
+    if (sensor) {
+        res.json(sensor);
+    } else {
+        throw new HTTPError(404, "Specified sensor cannot be found!");
+    }
 }));
 
 app.put('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
-
+    // TODO
 }));
 
 app.delete('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
-
+    // TODO
 }));
 
 // ----------------------

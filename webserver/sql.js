@@ -116,13 +116,25 @@ module.exports = {
     listClients: function () {
         return queryMultiple("SELECT * FROM client");
     },
+    getClient: function (clientId) {
+        return queryOne('SELECT * FROM client WHERE id = ?', clientId);
+    },
     getClientId: function (mqttId) {
         return queryOne('SELECT id FROM client WHERE mqttId = ?', mqttId)
             .then(row => (row === null ? null : row.id));
     },
+    listSensors: function (clientId) {
+        return queryMultiple('SELECT * FROM sensor WHERE clientId = ?', clientId);
+    },
+    getSensor: function (clientId, sensorId) {
+        return queryOne('SELECT * FROM sensor WHERE clientId = ? AND id = ?', clientId, sensorId);
+    },
     getSensorId: function (clientId, sensorType, unit) {
         return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND unit = ?', clientId, sensorType, unit)
             .then(row => (row === null ? null : row.id));
+    },
+    getData: function (sensorId, ) {
+
     },
     insertData: async function (sensorId, value) {
         await queryOne('INSERT INTO data (sensorId, value) VALUES (?, ?)', sensorId, value)
