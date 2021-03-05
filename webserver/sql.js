@@ -47,54 +47,49 @@ module.exports = {
     },
     createTables: function () {
         db.serialize(() => {
-            db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttID INTEGER, name VARCHAR(256))");
-            db.run("CREATE TABLE IF NOT EXISTS client_sensor (csid INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorId INTEGER, valueType INTEGER)");
-            db.run("CREATE TABLE IF NOT EXISTS data (csid INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(csid, time))");
-            db.run("CREATE TABLE IF NOT EXISTS user (userid INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR NOT NUll, password VARCHAR, permissionLevel INTEGER)");
+            db.run("CREATE TABLE IF NOT EXISTS user (userid INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(128) NOT NUll, password VARCHAR(128) NOT NULL, permissions INTEGER)");
+            db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttId INTEGER, name VARCHAR(256) NOT NULL)");
+            db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorType INTEGER, unit INTEGER)");
+            db.run("CREATE TABLE IF NOT EXISTS data (sensorId INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(sensorId, time))");
         });
-        this.createTestData(); // TODO: remove
+    },
+    deleteTables: function () {
+        db.serialize(() => {
+            db.run("DROP TABLE IF EXISTS user");
+            db.run("DROP TABLE IF EXISTS client");
+            db.run("DROP TABLE IF EXISTS sensor");
+            db.run("DROP TABLE IF EXISTS data");
+        });
     },
     createTestData: function() {
-        let sensors = ['CCS811', 'BME280', 'BME680'];
-        let clients = [
-            {"mqttID": 8, "name": "A204"},
-            {"mqttID": 9, "name": "A205"},
-            {"mqttID": 10, "name": "A206"},
-            {"mqttID": 11, "name": "A207"},
-            {"mqttID": 12, "name": "A208"},
-        ];
-        let clients_sensors = [
-            {clientId: 1, sensorId: 1, valueType: 0},
-            {clientId: 1, sensorId: 1, valueType: 1},
-            {clientId: 1, sensorId: 2, valueType: 2},
-            {clientId: 1, sensorId: 2, valueType: 3},
-            {clientId: 1, sensorId: 2, valueType: 4},
-            {clientId: 2, sensorId: 1, valueType: 0},
+        const clients = [
+            {mqttId: 8, name: "A204"},
+            {mqttId: 9, name: "A205"},
+            {mqttId: 10, name: "A206"},
+            {mqttId: 11, name: "A207"},
+            {mqttId: 12, name: "A208"},
         ];
 
         db.serialize(() => {
-            db.run("DELETE FROM sensor WHERE 1=1");
-            db.run("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'sensor'");
+            clients.forEach(client => {
+                queryOne("INSERT INTO client (mqttId, name) VALUES (?, ?)", client.mqttID, client.name);
+            });
+        });
 
-            sensors.forEach((sensor) => {
-                db.run("INSERT INTO sensor (name) VALUES ('" + sensor + "')");
-            })
+        const sensors = [
+            {clientId: 1, sensorType: 1, unit: 0},
+            {clientId: 1, sensorType: 1, unit: 1},
+            {clientId: 1, sensorType: 2, unit: 2},
+            {clientId: 1, sensorType: 2, unit: 3},
+            {clientId: 1, sensorType: 2, unit: 4},
+            {clientId: 2, sensorType: 1, unit: 0},
+        ];
 
-
-            db.run("DELETE FROM client WHERE 1=1");
-            db.run("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'client'");
-            clients.forEach((client) => {
-                db.run("INSERT INTO client (mqttId, name) VALUES ('" + client.mqttID + "', '" + client.name + "')");
-            })
-
-            db.run("DELETE FROM client_sensor WHERE 1=1");
-            db.run("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'client_sensor'");
-            clients_sensors.forEach((client_sensor) => {
-                db.run("INSERT INTO client_sensor (clientId, sensorId, valueType) VALUES ('" +
-                    client_sensor.clientId + "', '" +
-                    client_sensor.sensorId + "','" +
-                    client_sensor.valueType + "')");
-            })
+        db.serialize(() => {
+            sensors.forEach(sensor => {
+                // TODO: Create a update multiple function to facilitate batch insertion
+                queryOne("INSERT INTO client_sensor (clientId, sensorType, unit) VALUES (?, ?, ?)", sensor.clientId, sensor.sensorType, sensor.unit);
+            });
         });
     },
     getUser: function (username) {
@@ -106,7 +101,7 @@ module.exports = {
     listSensors: async function () {
         return constants.sensorTypes;
     },
-    getCSID: function (clientId, sensorId, valueType) {
+    getCSID: function (clientId, sensorId, valueType) { // TODO: REDO
         return queryOne('SELECT csid FROM client_sensor WHERE clientId = ? AND sensorId = ? AND valueType = ?', clientId, sensorId, valueType)
             .then(row => {
                 if (row === null) return null;
@@ -114,7 +109,7 @@ module.exports = {
                 return row.csid;
             });
     },
-    insertData: function (mqttId, sensorType, valueType,  data) {
+    insertData: function (mqttId, sensorType, valueType,  data) { // TODO: REDO
         console.log(mqttId + " " + sensorType + " " + valueType + " " + data);
         let sensorTypeId = -1;
         for (const [key, value] of Object.entries(constants.sensorTypes)) {
@@ -155,7 +150,5 @@ module.exports = {
                 console.log("[WARN] mqttId '" + mqttId + "' is not registered");
             }
         });
-
-
     }
 }

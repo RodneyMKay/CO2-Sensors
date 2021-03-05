@@ -5,7 +5,9 @@ const sql = require('./sql');
 console.log('[*] Setting up database...');
 
 sql.init();
+this.deleteTables(); // TODO: remove
 sql.createTables();
+this.createTestData(); // TODO: remove
 
 console.log("[*] Database ready!");
 
