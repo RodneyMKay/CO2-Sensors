@@ -1,10 +1,11 @@
 module.exports = {
     valueTypeIds: {
-        0: "eCO2",
+        0: "eCO2ppm",
         1: "TVOC",
-        2: "TEMPERATURE",
-        3: "HUMIDITY",
-        4: "PRESSURE",
-        5: "GAS"
+        2: "iaq",
+        3: "temp",
+        4: "hum",
+        5: "pressure",
+        6: "gas"
     }
 }
