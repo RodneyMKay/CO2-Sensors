@@ -124,7 +124,7 @@ module.exports = {
         return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND unit = ?', clientId, sensorType, unit)
             .then(row => (row === null ? null : row.id));
     },
-    insertData: async function (sensorId, time, value) {
-        await queryOne('INSERT INTO data (sensorId, time, value) VALUES (?, ?, ?)', sensorId, time, value)
+    insertData: async function (sensorId, value) {
+        await queryOne('INSERT INTO data (sensorId, value) VALUES (?, ?)', sensorId, value)
     }
 }
