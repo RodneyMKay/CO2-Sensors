@@ -3,8 +3,9 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-const credentials = require('./credentials');
 const config = require('./config');
+const constants = require('./constants');
+const credentials = require('./credentials');
 const sql = require('./sql');
 
 /**
@@ -41,14 +42,14 @@ function handleAsync(handler) {
 
 /**
  * Checks if the request is authorized and throws a HTTPError if it's not. Also checks if the user has the specified
- * permissionLevel or greater.
+ * permissions. 0 can be used as permissions to only check if the user is logged in.
  */
-function requirePermission(req, permissionLevel) {
+function requirePermission(req, permissions) {
     if (!req.session.user || !req.session.user.id) {
         throw new HTTPError(401, "You must be logged in to access this resource!");
     }
 
-    if (req.session.user.permissionLevel < permissionLevel) {
+    if ((req.session.user.permission & permissions) === permissions) {
         throw new HTTPError(403, "Your permission level isn't high enough to view this information!");
     }
 }
@@ -75,7 +76,7 @@ app.use('/', express.static(path.join(__dirname, '../webinterface/dist/')));
 // Auth api
 
 app.get('/api/v1/auth/currentUser', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
+    requirePermission(req, 0);
     res.json(req.session.user);
 }));
 
@@ -98,7 +99,7 @@ app.post('/api/v1/auth/login', handleAsync(async (req, res) => {
 }));
 
 app.post('/api/v1/auth/logout', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
+    requirePermission(req, 0);
     const user = req.session.user;
     req.session.user = null;
     res.json(user);
@@ -108,27 +109,25 @@ app.post('/api/v1/auth/logout', handleAsync(async (req, res) => {
 // Clients
 
 app.get('/api/v1/clients', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
 
 }));
 
 app.post('/api/v1/clients', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
+    requirePermission(req, constants.permission.manageClients);
 
 }));
 
 app.get('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
 
 }));
 
 app.put('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
+    requirePermission(req, constants.permission.manageClients);
 
 }));
 
 app.delete('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
+    requirePermission(req, constants.permission.manageClients);
 
 }));
 
@@ -136,27 +135,25 @@ app.delete('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
 // Clients -> Sensors
 
 app.get('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
 
 }));
 
 app.post('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
+    requirePermission(req, constants.permission.manageSensors);
 
 }));
 
 app.get('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
 
 }));
 
 app.put('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
+    requirePermission(req, constants.permission.manageSensors);
 
 }));
 
 app.delete('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
+    requirePermission(req, constants.permission.manageSensors);
 
 }));
 
