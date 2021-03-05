@@ -1,7 +1,6 @@
 const sqlite = require('sqlite3');
 
 const config = require('./config');
-const constants = require('./constants');
 
 let db = null;
 
@@ -120,53 +119,15 @@ module.exports = {
     listSensors: async function () {
         return constants.sensorTypes;
     },
+    getClientId: function (mqttId) {
+        return queryOne('SELECT id FROM client WHERE mqttId = ?', mqttId)
+            .then(row => (row === null ? null : row.id));
+    },
     getSensorId: function (clientId, sensorType, unit) {
         return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND unit = ?', clientId, sensorType, unit)
-            .then(row => {
-                if (row === null) return null;
-                else return row.id;
-            });
+            .then(row => (row === null ? null : row.id));
     },
-    insertData: function (mqttId, sensorType, valueType,  data) { // TODO: REDO
-        console.log(mqttId + " " + sensorType + " " + valueType + " " + data);
-        let sensorTypeId = -1;
-        for (const [key, value] of Object.entries(constants.sensorTypes)) {
-            if (value.toLowerCase() === sensorType.toLowerCase()) {
-                sensorTypeId = key;
-            }
-        }
-        if (sensorTypeId === -1) {
-            console.log("[WARN] SensorType '" + sensorType + "' is not supported!");
-            return null;
-        }
-
-        let valueTypeId = -1
-        for (const [key, value] of Object.entries(constants.valueTypeIds)) {
-            if (value.toLowerCase() === valueType.toLowerCase()) {
-                valueTypeId = key;
-            }
-        }
-        if (valueTypeId === -1) {
-            console.log("[WARN] ValueType '" + valueType + "' is not defined!");
-            return null;
-        }
-
-        queryMultiple("SELECT id FROM client WHERE mqttID = ?", mqttId).then((res) => {
-            if (res != null) {
-                let clientId = res[0].id;
-                this.getSensorId(clientId, sensorTypeId, valueTypeId).then((res) => {
-                    console.log("csid: " + res);
-
-                    if (true ||res != null) {
-                        queryMultiple("INSERT INTO data (csid, value) VALUES (?, ?)", 1, data).then();
-                        // queryMultiple("INSERT INTO data (csid, value) VALUES (?, ?)", res[0].csid, data);
-                    } else {
-                        console.log("[WARN] SensorValue '" + valueType + "' of '" + sensorType + "'is not defined");
-                    }
-                });
-            } else {
-                console.log("[WARN] mqttId '" + mqttId + "' is not registered");
-            }
-        });
+    insertData: async function (sensorId, time, value) {
+        await queryOne('INSERT INTO data (sensorId, time, value) VALUES (?, ?, ?)', sensorId, time, value)
     }
 }
