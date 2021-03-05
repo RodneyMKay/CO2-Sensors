@@ -7,7 +7,7 @@ console.log('[*] Setting up database...');
 sql.init();
 sql.deleteTables(); // TODO: remove
 sql.createTables();
-sql.createTestData(); // TODO: remove
+sql.createTestData().catch(error => console.log("[WARN] Couldn't create test data: " + error)); // TODO: remove
 
 console.log("[*] Database ready!");
 
