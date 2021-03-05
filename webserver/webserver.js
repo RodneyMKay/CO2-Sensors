@@ -141,16 +141,16 @@ app.delete('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
 // Clients -> Sensors
 
 app.get('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
-    res.json(sql.listSensors(parseInt(req.params.clientId)));
+    res.json(await sql.listSensors(parseInt(req.params.clientId)));
 }));
 
-app.post('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
+app.post('/api/v1/sensors', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
     // TODO
 }));
 
-app.get('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
-    const sensor = await sql.getSensor(parseInt(req.params.clientId), parseInt(req.params.sensorId));
+app.get('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
+    const sensor = await sql.getSensor(parseInt(req.params.sensorId));
 
     if (sensor) {
         res.json(sensor);
@@ -159,12 +159,12 @@ app.get('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, r
     }
 }));
 
-app.put('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
+app.put('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
     // TODO
 }));
 
-app.delete('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
+app.delete('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
     // TODO
 }));
