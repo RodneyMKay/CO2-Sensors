@@ -108,7 +108,7 @@ module.exports = {
             [2, 1, 0]
         ];
 
-        await updateBatch("INSERT INTO sensor (clientId, sensorType, unit) VALUES (?, ?, ?)", sensors);
+        await updateBatch("INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)", sensors);
     },
     getUser: function (username) {
         return queryOne("SELECT * FROM user  WHERE username = ?", username);
@@ -126,8 +126,8 @@ module.exports = {
     listSensors: function (clientId) {
         return queryMultiple('SELECT * FROM sensor WHERE clientId = ?', clientId);
     },
-    getSensor: function (clientId, sensorId) {
-        return queryOne('SELECT * FROM sensor WHERE clientId = ? AND id = ?', clientId, sensorId);
+    getSensor: function (sensorId) {
+        return queryOne('SELECT * FROM sensor WHERE id = ?', sensorId);
     },
     getSensorId: function (clientId, sensorType, valueType) {
         return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND valueType = ?', clientId, sensorType, valueType)
