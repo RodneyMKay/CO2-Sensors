@@ -120,12 +120,11 @@ module.exports = {
     listSensors: async function () {
         return constants.sensorTypes;
     },
-    getCSID: function (clientId, sensorId, valueType) { // TODO: REDO
-        return queryOne('SELECT csid FROM client_sensor WHERE clientId = ? AND sensorId = ? AND valueType = ?', clientId, sensorId, valueType)
+    getSensorId: function (clientId, sensorType, unit) {
+        return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND unit = ?', clientId, sensorType, unit)
             .then(row => {
                 if (row === null) return null;
-
-                return row.csid;
+                else return row.id;
             });
     },
     insertData: function (mqttId, sensorType, valueType,  data) { // TODO: REDO
@@ -155,7 +154,7 @@ module.exports = {
         queryMultiple("SELECT id FROM client WHERE mqttID = ?", mqttId).then((res) => {
             if (res != null) {
                 let clientId = res[0].id;
-                this.getCSID(clientId, sensorTypeId, valueTypeId).then((res) => {
+                this.getSensorId(clientId, sensorTypeId, valueTypeId).then((res) => {
                     console.log("csid: " + res);
 
                     if (true ||res != null) {
