@@ -1,6 +1,7 @@
 const sqlite = require('sqlite3');
 
 const config = require('./config');
+const constants = require('./constants');
 
 let db = null;
 
@@ -49,7 +50,7 @@ module.exports = {
             db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttID INTEGER, name VARCHAR(256))");
             db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(256))");
             db.run("CREATE TABLE IF NOT EXISTS client_sensor (csid INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorId INTEGER, valueType INTEGER)");
-            db.run("CREATE TABLE IF NOT EXISTS data (csid INTEGER, time DATE, serverId INTEGER, valueType INTEGER, PRIMARY KEY(csid, time))");
+            db.run("CREATE TABLE IF NOT EXISTS data (csid INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(csid, time))");
             db.run("CREATE TABLE IF NOT EXISTS user (userid INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR NOT NUll, password VARCHAR, permissionLevel INTEGER)");
         });
         this.createTestData(); // TODO: remove
