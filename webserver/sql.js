@@ -33,7 +33,7 @@ function queryMultiple(sql, ...params) {
  * @returns {Promise<Object>} object describing the fetched row
  */
 async function queryOne(sql, ...params) {
-    return queryMultiple(sql, params).then(rows => {
+    return queryMultiple(sql, ...params).then(rows => {
         return new Promise((resolve, reject) => {
             if (rows.length > 1) reject("Multiple results returned! (expected one)");
             else resolve(rows.length === 0 ? null : rows[0]);
@@ -72,7 +72,7 @@ module.exports = {
 
         db.serialize(() => {
             clients.forEach(client => {
-                queryOne("INSERT INTO client (mqttId, name) VALUES (?, ?)", client.mqttID, client.name);
+                queryOne("INSERT INTO client (mqttId, name) VALUES (?, ?)", client.mqttId, client.name);
             });
         });
 
@@ -88,7 +88,7 @@ module.exports = {
         db.serialize(() => {
             sensors.forEach(sensor => {
                 // TODO: Create a update multiple function to facilitate batch insertion
-                queryOne("INSERT INTO client_sensor (clientId, sensorType, unit) VALUES (?, ?, ?)", sensor.clientId, sensor.sensorType, sensor.unit);
+                queryOne("INSERT INTO sensor (clientId, sensorType, unit) VALUES (?, ?, ?)", sensor.clientId, sensor.sensorType, sensor.unit);
             });
         });
     },
