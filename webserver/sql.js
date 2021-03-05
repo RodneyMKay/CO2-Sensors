@@ -24,6 +24,34 @@ function queryMultiple(sql, ...params) {
 }
 
 /**
+ * Utility method for database operations. Prepares the specified statement and executes it by binding the parameters,
+ * specified as the inner arrays from batch. Promise is resolved when all operations complete successfully and returns
+ * nothing. If any statement fails, the promise is rejected.
+ *
+ * @param sql sql statement to use for this query
+ * @param batch two dimensional array of every row of data to be bound to the statement
+ * @returns {Promise<void>} promise that succeeds or fails with an error
+ */
+async function updateBatch(sql, batch) {
+    return new Promise((resolve, reject) => {
+        const statement = db.prepare(sql);
+        let count = batch.length;
+
+        batch.forEach(row => {
+            statement.all(row, err => {
+                if (err) reject(err);
+                else {
+                    count--;
+                    if (count === 0) {
+                        resolve();
+                    }
+                }
+            })
+        });
+    });
+}
+
+/**
  * Utility method for database operations. Prepares and executes the specified sql statement. The specified params
  * are bound to the statement. The object resulting from the promise represents the row found by this statement.
  * If no row is found, null is returned. If multiple are found, the promise is rejected.
@@ -61,36 +89,27 @@ module.exports = {
             db.run("DROP TABLE IF EXISTS data");
         });
     },
-    createTestData: function() {
+    createTestData: async function() {
         const clients = [
-            {mqttId: 8, name: "A204"},
-            {mqttId: 9, name: "A205"},
-            {mqttId: 10, name: "A206"},
-            {mqttId: 11, name: "A207"},
-            {mqttId: 12, name: "A208"},
+            [8, 'A204'],
+            [9, 'A205'],
+            [10, 'A206'],
+            [11, 'A207'],
+            [12, 'A208']
         ];
 
-        db.serialize(() => {
-            clients.forEach(client => {
-                queryOne("INSERT INTO client (mqttId, name) VALUES (?, ?)", client.mqttId, client.name);
-            });
-        });
+        await updateBatch("INSERT INTO client (mqttId, name) VALUES (?, ?)", clients);
 
         const sensors = [
-            {clientId: 1, sensorType: 1, unit: 0},
-            {clientId: 1, sensorType: 1, unit: 1},
-            {clientId: 1, sensorType: 2, unit: 2},
-            {clientId: 1, sensorType: 2, unit: 3},
-            {clientId: 1, sensorType: 2, unit: 4},
-            {clientId: 2, sensorType: 1, unit: 0},
+            [1, 1, 0],
+            [1, 1, 1],
+            [1, 2, 2],
+            [1, 2, 3],
+            [1, 2, 4],
+            [2, 1, 0]
         ];
 
-        db.serialize(() => {
-            sensors.forEach(sensor => {
-                // TODO: Create a update multiple function to facilitate batch insertion
-                queryOne("INSERT INTO sensor (clientId, sensorType, unit) VALUES (?, ?, ?)", sensor.clientId, sensor.sensorType, sensor.unit);
-            });
-        });
+        await updateBatch("INSERT INTO sensor (clientId, sensorType, unit) VALUES (?, ?, ?)", sensors);
     },
     getUser: function (username) {
         return queryOne("SELECT * FROM user  WHERE username = ?", username);
