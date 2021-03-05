@@ -25,25 +25,23 @@ async function handleMessage(topic, message) {
         return;
     }
 
-    const unit = findUnit(splitTopic[3]);
+    const valueType = findValueType(splitTopic[3]);
 
-    if (!unit) {
-        console.warn('[WARN] Received unknown unit: ' + unit);
+    if (!valueType) {
+        console.warn('[WARN] Received unknown value type: ' + valueType);
         return;
     }
 
-    if (clientId && sensorType && unit) {
-        const data = parseFloat(validateMessage(message));
+    const data = parseFloat(validateMessage(message));
 
-        if (!data) {
-            console.log("[WARN] Invalid data received: " + data);
-            return;
-        }
-
-        const sensorId = await sql.getSensorId(clientId, sensorType, unit);
-
-        await sql.insertData(sensorId, data);
+    if (!data) {
+        console.log("[WARN] Invalid data received: " + data);
+        return;
     }
+
+    const sensorId = await sql.getSensorId(clientId, sensorType, valueType);
+
+    await sql.insertData(sensorId, data);
 }
 
 function findSensorType(typeName) {
@@ -56,11 +54,11 @@ function findSensorType(typeName) {
     }
 }
 
-function findUnit(unitName) {
+function findValueType(valueTypeName) {
     let valueTypeId = null;
 
-    for (const [key, value] of Object.entries(constants.units)) {
-        if (value.toLowerCase() === unitName.toLowerCase()) {
+    for (const [key, value] of Object.entries(constants.valueTypes)) {
+        if (value.toLowerCase() === valueTypeName.toLowerCase()) {
             valueTypeId = key;
         }
     }
