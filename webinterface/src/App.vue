@@ -1,19 +1,41 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <ClientChooser v-if="showClientChooser" v-bind:sensors="sensors" @selected="selectHandler"></ClientChooser>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ClientChooser from "@/components/ClientChooser";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    ClientChooser
+  }, data: function () {
+    return {
+      sensors: ['loading'],
+      showClientChooser: true
+    }
+
+  }, methods: {
+    selectHandler(value) {
+      console.log("selected " + value);
+      this.showClientChooser = false;
+    }
+  }, created() {
+    fetch("/api/clients/list", {
+          method: "POST"
+        }
+    ).then(response => {
+      if (response.ok) {
+        response.json().then( data => {
+          this.sensors = data;
+        })
+      }
+    })
   }
 }
+
 </script>
 
 <style>

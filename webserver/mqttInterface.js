@@ -1,26 +1,84 @@
 const mqtt = require('mqtt');
 const cryptoJS = require('crypto-js');
 
-const credentials = require('./credentials')
-const config = require('./config')
-const sql = require('./sql')
+const credentials = require('./credentials');
+const config = require('./config');
+const constants = require('./constants');
+const sql = require('./sql');
 
-function handleMessage(topic, message) {
-    let splittopic = topic.split("/");
-    let splitmessage = message.toString().split("$");
+async function handleMessage(topic, message) {
+    const splitTopic = topic.split('/');
 
-    if (splitmessage.length === 2 && splittopic.length === 4) {
-        if (checkHMACMessage(splitmessage[0], splitmessage[1], credentials.sha256hmacSecret)) {
-            //console.log(topic + ": " + message + " VALID");
+    if (splitTopic.length !== 4 || splitTopic[0] !== 'nodes') return;
 
-        } else {
-            //console.log(topic + ": " + message + " INVALID");
+    const clientId = await sql.getClientId(splitTopic[1]);
+
+    if (!clientId) {
+        console.log('[WARN] Received unknown clientId: ' + clientId);
+        return;
+    }
+
+    const sensorType = findSensorType(splitTopic[2]);
+
+    if (!sensorType) {
+        console.log('[WARN] Received unknown sensorType: ' + sensorType);
+        return;
+    }
+
+    const unit = findUnit(splitTopic[3]);
+
+    if (!unit) {
+        console.warn('[WARN] Received unknown unit: ' + unit);
+        return;
+    }
+
+    if (clientId && sensorType && unit) {
+        const data = parseFloat(validateMessage(message));
+
+        if (!data) {
+            console.log("[WARN] Invalid data received: " + data);
+            return;
+        }
+
+        const sensorId = await sql.getSensorId(clientId, sensorType, unit);
+
+        await sql.insertData(sensorId, data);
+    }
+}
+
+function findSensorType(typeName) {
+    let sensorTypeId = null;
+
+    for (const [key, value] of Object.entries(constants.sensorTypes)) {
+        if (value.toLowerCase() === typeName.toLowerCase()) {
+            sensorTypeId = key;
         }
     }
 }
 
-function checkHMACMessage(data, hmac, secret) {
-    return hmac === cryptoJS.HmacSHA256(data, secret).toString();
+function findUnit(unitName) {
+    let valueTypeId = null;
+
+    for (const [key, value] of Object.entries(constants.units)) {
+        if (value.toLowerCase() === unitName.toLowerCase()) {
+            valueTypeId = key;
+        }
+    }
+}
+
+function validateMessage(message) {
+    const splitMessage = message.split('$');
+
+    if (splitMessage.length === 2) {
+        const data = splitMessage[0];
+        const hash = splitMessage[1];
+
+        if (hash === cryptoJS.HmacSHA256(data, credentials.sha256hmacSecret).toString()) {
+            return message;
+        }
+    }
+
+    return null;
 }
 
 module.exports = {
