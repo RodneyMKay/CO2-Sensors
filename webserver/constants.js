@@ -4,7 +4,7 @@ module.exports = {
         2: "BME280",
         3: "BME680"
     },
-    units: {
+    valueTypes: {
         0: "eCO2ppm",
         1: "TVOC",
         2: "iaq",

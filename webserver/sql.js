@@ -76,7 +76,7 @@ module.exports = {
         db.serialize(() => {
             db.run("CREATE TABLE IF NOT EXISTS user (userid INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(128) NOT NUll, password VARCHAR(128) NOT NULL, permissions INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttId INTEGER, name VARCHAR(256) NOT NULL)");
-            db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorType INTEGER, unit INTEGER)");
+            db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorType INTEGER, valueType INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS data (sensorId INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(sensorId, time))");
         });
     },
@@ -129,8 +129,8 @@ module.exports = {
     getSensor: function (clientId, sensorId) {
         return queryOne('SELECT * FROM sensor WHERE clientId = ? AND id = ?', clientId, sensorId);
     },
-    getSensorId: function (clientId, sensorType, unit) {
-        return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND unit = ?', clientId, sensorType, unit)
+    getSensorId: function (clientId, sensorType, valueType) {
+        return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND valueType = ?', clientId, sensorType, valueType)
             .then(row => (row === null ? null : row.id));
     },
     getData: function (sensorId, ) {
