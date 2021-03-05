@@ -1,9 +1,9 @@
 const mqtt = require('mqtt');
 const cryptoJS = require('crypto-js');
 
-const credentials = require('./credentials');
-const config = require('./config');
 const constants = require('./constants');
+const config = require('./config');
+const credentials = require('./credentials');
 const sql = require('./sql');
 
 async function handleMessage(topic, message) {
