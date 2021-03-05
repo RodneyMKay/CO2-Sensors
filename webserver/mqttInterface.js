@@ -12,6 +12,7 @@ function handleMessage(topic, message) {
     if (splitmessage.length === 2 && splittopic.length === 4) {
         if (checkHMACMessage(splitmessage[0], splitmessage[1], credentials.sha256hmacSecret)) {
             //console.log(topic + ": " + message + " VALID");
+            sql.insertData(splittopic[1], splittopic[2], splittopic[3], splitmessage[0]);
 
         } else {
             //console.log(topic + ": " + message + " INVALID");

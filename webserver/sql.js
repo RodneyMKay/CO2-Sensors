@@ -108,6 +108,54 @@ module.exports = {
     },
     getCSID: function (clientId, sensorId, valueType) {
         return queryOne('SELECT csid FROM client_sensor WHERE clientId = ? AND sensorId = ? AND valueType = ?', clientId, sensorId, valueType)
-            .then(row => row.csid);
+            .then(row => {
+                if (row === null) return null;
+
+                return row.csid;
+            });
+    },
+    insertData: function (mqttId, sensorType, valueType,  data) {
+        console.log(mqttId + " " + sensorType + " " + valueType + " " + data);
+        let sensorTypeId = -1;
+        for (const [key, value] of Object.entries(constants.sensorTypes)) {
+            if (value.toLowerCase() === sensorType.toLowerCase()) {
+                sensorTypeId = key;
+            }
+        }
+        if (sensorTypeId === -1) {
+            console.log("[WARN] SensorType '" + sensorType + "' is not supported!");
+            return null;
+        }
+
+        let valueTypeId = -1
+        for (const [key, value] of Object.entries(constants.valueTypeIds)) {
+            if (value.toLowerCase() === valueType.toLowerCase()) {
+                valueTypeId = key;
+            }
+        }
+        if (valueTypeId === -1) {
+            console.log("[WARN] ValueType '" + valueType + "' is not defined!");
+            return null;
+        }
+
+        queryMultiple("SELECT id FROM client WHERE mqttID = ?", mqttId).then((res) => {
+            if (res != null) {
+                let clientId = res[0].id;
+                this.getCSID(clientId, sensorTypeId, valueTypeId).then((res) => {
+                    console.log("csid: " + res);
+
+                    if (true ||res != null) {
+                        queryMultiple("INSERT INTO data (csid, value) VALUES (?, ?)", 1, data).then();
+                        // queryMultiple("INSERT INTO data (csid, value) VALUES (?, ?)", res[0].csid, data);
+                    } else {
+                        console.log("[WARN] SensorValue '" + valueType + "' of '" + sensorType + "'is not defined");
+                    }
+                });
+            } else {
+                console.log("[WARN] mqttId '" + mqttId + "' is not registered");
+            }
+        });
+
+
     }
 }
