@@ -74,56 +74,14 @@ app.use('/', express.static(path.join(__dirname, '../webinterface/dist/')));
 // ----------------------
 // User api
 
-app.get('/api/user', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
-    res.json(req.session.user);
-}));
-
-app.post('/api/user/login', handleAsync(async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-
-    if (!username || !password) {
-        throw new HTTPError(400, "Please specify username and password!");
-    }
-
-    const user = await sql.getUser(username);
-
-    if (user && user.password === password) {
-        req.session.user = user;
-        res.json(user);
-    } else {
-        throw new HTTPError(403, "Username or password not valid!");
-    }
-}));
-
-app.post('/api/user/logout', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
-    const user = req.session.user;
-    req.session.user = null;
-    res.json(user);
-}));
-
-
 // ----------------------
 // Sensors
-app.post('/api/sensors/list', handleAsync(async (req, res) => {
-    sql.listSensors().then((sensors) => {
-        res.json(sensors);
-    });
-}));
 
 // ----------------------
 // Clients
-app.post('/api/clients/list', handleAsync(async (req, res) => {
-    sql.listClients().then((clients) => {
-        res.json(clients);
-    });
-}));
 
 // ----------------------
 // Data
-
 
 // ----------------------
 // Misc
