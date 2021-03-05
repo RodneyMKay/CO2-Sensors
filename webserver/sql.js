@@ -57,12 +57,21 @@ module.exports = {
     createTestData: function() {
         let sensors = ['CCS811', 'BME280', 'BME680'];
         let clients = [
-            {"mqttID": 1, "name": "A204"},
-            {"mqttID": 2, "name": "A205"},
-            {"mqttID": 3, "name": "A206"},
-            {"mqttID": 4, "name": "A207"},
-            {"mqttID": 5, "name": "A208"},
+            {"mqttID": 8, "name": "A204"},
+            {"mqttID": 9, "name": "A205"},
+            {"mqttID": 10, "name": "A206"},
+            {"mqttID": 11, "name": "A207"},
+            {"mqttID": 12, "name": "A208"},
         ];
+        let clients_sensors = [
+            {clientId: 1, sensorId: 1, valueType: 0},
+            {clientId: 1, sensorId: 1, valueType: 1},
+            {clientId: 1, sensorId: 2, valueType: 2},
+            {clientId: 1, sensorId: 2, valueType: 3},
+            {clientId: 1, sensorId: 2, valueType: 4},
+            {clientId: 2, sensorId: 1, valueType: 0},
+        ];
+
         db.serialize(() => {
             db.run("DELETE FROM sensor WHERE 1=1");
             db.run("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'sensor'");
@@ -76,6 +85,15 @@ module.exports = {
             db.run("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'client'");
             clients.forEach((client) => {
                 db.run("INSERT INTO client (mqttId, name) VALUES ('" + client.mqttID + "', '" + client.name + "')");
+            })
+
+            db.run("DELETE FROM client_sensor WHERE 1=1");
+            db.run("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'client_sensor'");
+            clients_sensors.forEach((client_sensor) => {
+                db.run("INSERT INTO client_sensor (clientId, sensorId, valueType) VALUES ('" +
+                    client_sensor.clientId + "', '" +
+                    client_sensor.sensorId + "','" +
+                    client_sensor.valueType + "')");
             })
         });
     },
