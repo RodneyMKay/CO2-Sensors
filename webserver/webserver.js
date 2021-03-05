@@ -105,44 +105,67 @@ app.post('/api/v1/auth/logout', handleAsync(async (req, res) => {
 }));
 
 // ----------------------
-// User api
-
-app.get('/api/user/current', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
-    res.json(req.session.user);
-}));
-
-app.post('/api/user/login', handleAsync(async (req, res) => {
-}));
-
-app.post('/api/user/logout', handleAsync(async (req, res) => {
-}));
-
-// ----------------------
-// Sensors
-
-app.get('/api/sensor', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
-
-}));
-
-app.get('/api/sensor/:sensorId', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
-
-}));
-
-app.get('/api/sensor/add', handleAsync(async (req, res) => {
-    requirePermission(req, 1);
-
-}));
-
-// ----------------------
 // Clients
 
+app.get('/api/v1/clients', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.post('/api/v1/clients', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.get('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.put('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.delete('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+// ----------------------
+// Clients -> Sensors
+
+app.get('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.post('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.get('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.put('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
+
+app.delete('/api/v1/clients/:clientId/sensors/:sensorId', handleAsync(async (req, res) => {
+    requirePermission(req, 1);
+
+}));
 
 // ----------------------
 // Data
 
+app.get('/api/v1/data/:sensorId', handleAsync(async (req, res) => {
+
+}));
 
 // ----------------------
 // Misc
