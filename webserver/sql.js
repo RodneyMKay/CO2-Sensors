@@ -116,9 +116,6 @@ module.exports = {
     listClients: function () {
         return queryMultiple("SELECT * FROM client");
     },
-    listSensors: async function () {
-        return constants.sensorTypes;
-    },
     getClientId: function (mqttId) {
         return queryOne('SELECT id FROM client WHERE mqttId = ?', mqttId)
             .then(row => (row === null ? null : row.id));
