@@ -48,7 +48,6 @@ module.exports = {
     createTables: function () {
         db.serialize(() => {
             db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttID INTEGER, name VARCHAR(256))");
-            db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(256))");
             db.run("CREATE TABLE IF NOT EXISTS client_sensor (csid INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorId INTEGER, valueType INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS data (csid INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(csid, time))");
             db.run("CREATE TABLE IF NOT EXISTS user (userid INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR NOT NUll, password VARCHAR, permissionLevel INTEGER)");
@@ -105,7 +104,7 @@ module.exports = {
         return queryMultiple("SELECT * FROM client");
     },
     listSensors: async function () {
-        return queryMultiple("SELECT * FROM sensor");
+        return constants.sensorTypes;
     },
     getCSID: function (clientId, sensorId, valueType) {
         return queryOne('SELECT csid FROM client_sensor WHERE clientId = ? AND sensorId = ? AND valueType = ?', clientId, sensorId, valueType)
