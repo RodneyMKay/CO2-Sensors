@@ -15,6 +15,8 @@ module.exports = {
     },
     permission: {
         manageClients: 0x01,
-        manageSensors: 0x02
+        manageSensors: 0x02,
+        manageUsers: 0x04,
+        globalSettings: 0x08
     }
 }
