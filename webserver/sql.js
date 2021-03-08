@@ -74,7 +74,7 @@ module.exports = {
     },
     createTables: function () {
         db.serialize(() => {
-            db.run("CREATE TABLE IF NOT EXISTS user (userid INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(128) NOT NUll, password VARCHAR(128) NOT NULL, permissions INTEGER)");
+            db.run("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(128) NOT NUll, password VARCHAR(128) NOT NULL, permissions INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttId INTEGER, name VARCHAR(256) NOT NULL)");
             db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorType INTEGER, valueType INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS data (sensorId INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(sensorId, time))");
@@ -109,6 +109,12 @@ module.exports = {
         ];
 
         await updateBatch("INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)", sensors);
+
+        const users = [
+            ["test", "test", 127]
+        ]
+
+        await updateBatch("INSERT INTO user (username, password, permissions) VALUES (?, ?, ?)", users);
     },
     getUser: function (username) {
         return queryOne("SELECT * FROM user  WHERE username = ?", username);

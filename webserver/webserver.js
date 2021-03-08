@@ -49,7 +49,7 @@ function requirePermission(req, permissions) {
         throw new HTTPError(401, "You must be logged in to access this resource!");
     }
 
-    if ((req.session.user.permission & permissions) === permissions) {
+    if ((req.session.user.permissions & permissions) !== permissions) {
         throw new HTTPError(403, "Your permission level isn't high enough to view this information!");
     }
 }
@@ -64,7 +64,7 @@ app.use('/api/v1/*', session({
     secret: credentials.sessionSecret,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }
+    // cookie: { secure: true } - Only enable if ssl is active
 }));
 
 // ----------------------
