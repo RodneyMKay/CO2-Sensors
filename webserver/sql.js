@@ -68,6 +68,25 @@ async function queryOne(sql, ...params) {
     });
 }
 
+/**
+ * Utility method for database operations. Prepares and executes the specified sql statement. The specified params
+ * are bound to the statement. This method is for inserting new data into a database or deleting them. The object
+ * resulting from the promise represents the last updated row id.
+ *
+ * @param sql sql statement to use for this query
+ * @param params parameters bound to the sql statement
+ * @returns {Promise<int>} object describing the fetched row
+ */
+function updateOne(sql, ...params) {
+    return new Promise((resolve, reject) => {
+        const statement = db.prepare(sql);
+        statement.run(params, err => {
+            if (err) reject(err);
+            else resolve(statement.lastID);
+        });
+    });
+}
+
 module.exports = {
     init: function () {
         db = new sqlite.Database(config.databaseFile);
@@ -116,19 +135,28 @@ module.exports = {
 
         await updateBatch("INSERT INTO user (username, password, permissions) VALUES (?, ?, ?)", users);
     },
+    // ----------------------
+    // User
     getUser: function (username) {
-        return queryOne("SELECT * FROM user  WHERE username = ?", username);
+        return queryOne("SELECT * FROM user WHERE username = ?", username);
     },
+    // ----------------------
+    // Client
     listClients: function () {
         return queryMultiple("SELECT * FROM client");
     },
     getClient: function (clientId) {
         return queryOne('SELECT * FROM client WHERE id = ?', clientId);
     },
+    addClient: async function (mqttId, name) {
+        return await updateOne("INSERT INTO client (mqttId, name) VALUES (?, ?)", mqttId, name);
+    },
     getClientId: function (mqttId) {
         return queryOne('SELECT id FROM client WHERE mqttId = ?', mqttId)
             .then(row => (row === null ? null : row.id));
     },
+    // ----------------------
+    // Sensor
     listSensors: function (clientId) {
         return queryMultiple('SELECT * FROM sensor WHERE clientId = ?', clientId);
     },
@@ -139,6 +167,8 @@ module.exports = {
         return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND valueType = ?', clientId, sensorType, valueType)
             .then(row => (row === null ? null : row.id));
     },
+    // ----------------------
+    // Data
     getData: function (sensorId, ) {
 
     },
