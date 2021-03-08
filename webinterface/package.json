@@ -19,7 +19,7 @@
   "homepage": "https://github.com/RodneyMKay/CO2-Sensors#readme",
   "dependencies": {
     "bootstrap": "^4.6.0",
-    "bootstrap-vue": "^2.21.2",
+    "bootstrap-icons": "^1.4.0",
     "core-js": "^3.6.5",
     "vue": "^2.6.11"
   },
