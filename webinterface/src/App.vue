@@ -2,7 +2,9 @@
   <div id="app" class="d-flex">
     <Sidebar @client-selected="clientSelected($event)" />
     <div id="content" class="flex-fill">
-      <ClientDisplay />
+      <div class="container">
+        <ClientDisplay />
+      </div>
     </div>
   </div>
 </template>
