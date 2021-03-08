@@ -109,6 +109,12 @@ module.exports = {
         ];
 
         await updateBatch("INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)", sensors);
+
+        const users = [
+            ["test", "test", 127]
+        ]
+
+        await updateBatch("INSERT INTO user (username, password, permissions) VALUES (?, ?, ?)", users);
     },
     getUser: function (username) {
         return queryOne("SELECT * FROM user  WHERE username = ?", username);
