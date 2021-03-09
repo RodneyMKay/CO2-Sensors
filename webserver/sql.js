@@ -74,7 +74,7 @@ module.exports = {
     },
     createTables: function () {
         db.serialize(() => {
-            db.run("CREATE TABLE IF NOT EXISTS user (userid INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(128) NOT NUll, password VARCHAR(128) NOT NULL, permissions INTEGER)");
+            db.run("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(128) NOT NUll, password VARCHAR(128) NOT NULL, permissions INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttId INTEGER, name VARCHAR(256) NOT NULL)");
             db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorType INTEGER, valueType INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS data (sensorId INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(sensorId, time))");
@@ -109,6 +109,12 @@ module.exports = {
         ];
 
         await updateBatch("INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)", sensors);
+
+        const users = [
+            ["test", "test", 127]
+        ]
+
+        await updateBatch("INSERT INTO user (username, password, permissions) VALUES (?, ?, ?)", users);
     },
     getUser: function (username) {
         return queryOne("SELECT * FROM user  WHERE username = ?", username);
@@ -116,13 +122,25 @@ module.exports = {
     listClients: function () {
         return queryMultiple("SELECT * FROM client");
     },
+    getClient: function (clientId) {
+        return queryOne('SELECT * FROM client WHERE id = ?', clientId);
+    },
     getClientId: function (mqttId) {
         return queryOne('SELECT id FROM client WHERE mqttId = ?', mqttId)
             .then(row => (row === null ? null : row.id));
     },
+    listSensors: function (clientId) {
+        return queryMultiple('SELECT * FROM sensor WHERE clientId = ?', clientId);
+    },
+    getSensor: function (sensorId) {
+        return queryOne('SELECT * FROM sensor WHERE id = ?', sensorId);
+    },
     getSensorId: function (clientId, sensorType, valueType) {
         return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND valueType = ?', clientId, sensorType, valueType)
             .then(row => (row === null ? null : row.id));
+    },
+    getData: function (sensorId, ) {
+
     },
     insertData: async function (sensorId, value) {
         await queryOne('INSERT INTO data (sensorId, value) VALUES (?, ?)', sensorId, value)

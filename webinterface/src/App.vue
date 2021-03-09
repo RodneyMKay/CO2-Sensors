@@ -1,50 +1,37 @@
 <template>
-  <div id="app">
-    <ClientChooser v-if="showClientChooser" v-bind:sensors="sensors" @selected="selectHandler"></ClientChooser>
+  <div id="app" class="d-flex">
+    <Sidebar @client-selected="clientSelected($event)" />
+    <div id="content" class="flex-fill">
+      <div class="container">
+        <ClientDisplay />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import ClientChooser from "@/components/ClientChooser";
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import Sidebar from "@/components/Sidebar";
+import ClientDisplay from "@/components/ClientDisplay";
 
 export default {
   name: 'App',
-  components: {
-    ClientChooser
-  }, data: function () {
-    return {
-      sensors: ['loading'],
-      showClientChooser: true
+  components: {ClientDisplay, Sidebar },
+  methods: {
+    clientSelected: event => {
+      console.log(event);
     }
-
-  }, methods: {
-    selectHandler(value) {
-      console.log("selected " + value);
-      this.showClientChooser = false;
-    }
-  }, created() {
-    fetch("/api/clients/list", {
-          method: "POST"
-        }
-    ).then(response => {
-      if (response.ok) {
-        response.json().then( data => {
-          this.sensors = data;
-        })
-      }
-    })
   }
 }
-
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  min-height: 100vh;
+}
+
+#content {
+  background-color: #a7d4ff;
 }
 </style>

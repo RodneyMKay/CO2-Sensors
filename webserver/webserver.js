@@ -3,8 +3,9 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-const credentials = require('./credentials');
 const config = require('./config');
+const constants = require('./constants');
+const credentials = require('./credentials');
 const sql = require('./sql');
 
 /**
@@ -30,10 +31,10 @@ function handleAsync(handler) {
         handler(req, res).catch(error => {
             if (error instanceof HTTPError) {
                 res.status(error.statusCode);
-                res.json({error: {code: error.statusCode, message: error.message}});
+                res.json({error: {status: error.statusCode, message: error.message}});
             } else {
                 res.status(500);
-                res.json({error: {code: 500, message: error.toString()}});
+                res.json({error: {status: 500, message: error.toString()}});
             }
         });
     }
@@ -41,14 +42,14 @@ function handleAsync(handler) {
 
 /**
  * Checks if the request is authorized and throws a HTTPError if it's not. Also checks if the user has the specified
- * permissionLevel or greater.
+ * permissions. 0 can be used as permissions to only check if the user is logged in.
  */
-function requirePermission(req, permissionLevel) {
+function requirePermission(req, permissions) {
     if (!req.session.user || !req.session.user.id) {
         throw new HTTPError(401, "You must be logged in to access this resource!");
     }
 
-    if (req.session.user.permissionLevel < permissionLevel) {
+    if ((req.session.user.permissions & permissions) !== permissions) {
         throw new HTTPError(403, "Your permission level isn't high enough to view this information!");
     }
 }
@@ -57,13 +58,13 @@ function requirePermission(req, permissionLevel) {
 // Setup server
 
 const app = express();
-app.use('/api/*', bodyParser.json());
-app.use('/api/*', bodyParser.urlencoded({extended: true}));
-app.use('/api/*', session({
+app.use('/api/v1/*', bodyParser.json());
+app.use('/api/v1/*', bodyParser.urlencoded({extended: true}));
+app.use('/api/v1/*', session({
     secret: credentials.sessionSecret,
     resave: false,
     saveUninitialized: true,
-//    cookie: { secure: true }
+    // cookie: { secure: true } - Only enable if ssl is active
 }));
 
 // ----------------------
@@ -72,16 +73,108 @@ app.use('/api/*', session({
 app.use('/', express.static(path.join(__dirname, '../webinterface/dist/')));
 
 // ----------------------
-// User api
+// Auth api
 
-// ----------------------
-// Sensors
+app.get('/api/v1/auth/currentUser', handleAsync(async (req, res) => {
+    requirePermission(req, 0);
+    res.json(req.session.user);
+}));
+
+app.post('/api/v1/auth/login', handleAsync(async (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    if (!username || !password) {
+        throw new HTTPError(400, "Please specify username and password!");
+    }
+
+    const user = await sql.getUser(username);
+
+    if (user && user.password === password) {
+        req.session.user = user;
+        res.json(user);
+    } else {
+        throw new HTTPError(403, "Username or password not valid!");
+    }
+}));
+
+app.post('/api/v1/auth/logout', handleAsync(async (req, res) => {
+    requirePermission(req, 0);
+    const user = req.session.user;
+    req.session.user = null;
+    res.json(user);
+}));
 
 // ----------------------
 // Clients
 
+app.get('/api/v1/clients', handleAsync(async (req, res) => {
+    res.json(await sql.listClients())
+}));
+
+app.post('/api/v1/clients', handleAsync(async (req, res) => {
+    requirePermission(req, constants.permission.manageClients);
+    // TODO
+}));
+
+app.get('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
+    const client = await sql.getClient(parseInt(req.params.clientId));
+
+    if (client) {
+        res.json(client);
+    } else {
+        throw new HTTPError(404, "Client with the specified id not found!");
+    }
+}));
+
+app.put('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
+    requirePermission(req, constants.permission.manageClients);
+    // TODO
+}));
+
+app.delete('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
+    requirePermission(req, constants.permission.manageClients);
+    // TODO
+}));
+
+// ----------------------
+// Clients -> Sensors
+
+app.get('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
+    res.json(await sql.listSensors(parseInt(req.params.clientId)));
+}));
+
+app.post('/api/v1/sensors', handleAsync(async (req, res) => {
+    requirePermission(req, constants.permission.manageSensors);
+    // TODO
+}));
+
+app.get('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
+    const sensor = await sql.getSensor(parseInt(req.params.sensorId));
+
+    if (sensor) {
+        res.json(sensor);
+    } else {
+        throw new HTTPError(404, "Specified sensor cannot be found!");
+    }
+}));
+
+app.put('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
+    requirePermission(req, constants.permission.manageSensors);
+    // TODO
+}));
+
+app.delete('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
+    requirePermission(req, constants.permission.manageSensors);
+    // TODO
+}));
+
 // ----------------------
 // Data
+
+app.get('/api/v1/data/:sensorId', handleAsync(async (req, res) => {
+
+}));
 
 // ----------------------
 // Misc
