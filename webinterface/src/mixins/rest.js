@@ -3,7 +3,10 @@ async function handleResponse(url, response) {
         return await response.json();
     } else {
         response.json()
-            .then(data => console.log("[ERROR] Request to " + url + " returned not ok: " + data))
+            .then(data => {
+                console.log("[ERROR] Request to " + url + " returned not ok: ");
+                console.log(data);
+            })
             .catch(() => console.log("[ERROR] Request to " + url + " returned an error!"));
     }
 }
