@@ -178,8 +178,11 @@ app.delete('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
 // ----------------------
 // Data
 
-app.get('/api/v1/data/:sensorId', handleAsync(async (req, res) => {
+app.get('/api/v1/sensors/:sensorId/data', handleAsync(async (req, res) => {
+    const from = new Date(parseInt(req.query.from));
+    const to = new Date(parseInt(req.query.to));
 
+    res.json(await sql.getData(req.params.sensorId, from, to));
 }));
 
 // ----------------------
