@@ -4,7 +4,7 @@
     <Navigation>
       <NavigationItem @click="dataExpanded = !dataExpanded"><i class="bi-bar-chart-fill"></i> Sensordaten</NavigationItem>
       <Navigation v-if="dataExpanded">
-        <NavigationItem small="true" v-for="client in clients" :key="client.id">{{ client.name }}</NavigationItem>
+        <NavigationItem small="true" v-for="client in clients" :key="client.id" @click="updateSensor">{{ client.name }}</NavigationItem>
       </Navigation>
       <NavigationItem v-if="currentUser && (currentUser.permissions & 0x01) !== 0"><i class="bi-diagram-3-fill"></i> Clients</NavigationItem>
       <NavigationItem v-if="currentUser && (currentUser.permissions & 0x04) !== 0"><i class="bi-people-fill"></i> Nutzer</NavigationItem>
@@ -40,6 +40,10 @@ export default {
       this.post("/api/v1/auth/logout").then(() => {
         this.currentUser = null;
       });
+    },
+    updateSensor: function (data) {
+      console.log(data);
+
     }
   },
   created() {
