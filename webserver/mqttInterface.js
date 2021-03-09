@@ -52,6 +52,7 @@ function findSensorType(typeName) {
             sensorTypeId = key;
         }
     }
+    return sensorTypeId;
 }
 
 function findValueType(valueTypeName) {
@@ -62,10 +63,11 @@ function findValueType(valueTypeName) {
             valueTypeId = key;
         }
     }
+    return valueTypeId;
 }
 
 function validateMessage(message) {
-    const splitMessage = message.split('$');
+    const splitMessage = message.toString().split("$");
 
     if (splitMessage.length === 2) {
         const data = splitMessage[0];
@@ -73,6 +75,8 @@ function validateMessage(message) {
 
         if (hash === cryptoJS.HmacSHA256(data, credentials.sha256hmacSecret).toString()) {
             return message;
+        } else {
+            console.log("Try dis: " + cryptoJS.HmacSHA256(data, credentials.sha256hmacSecret).toString());
         }
     }
 
