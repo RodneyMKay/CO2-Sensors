@@ -10,11 +10,14 @@ export default {
   mixins: [rest],
   props: ["clientId"],
   data: () => ({
-    client: null
+    client: {"name": "loading..."}
   }),
   created() {
     this.get(`/api/v1/clients/${this.clientId}`).then(client => {
-      return client.name;
+      if (client !== undefined) {
+        this.client = {"name": client.name};
+        return client.name;
+      }
     })
   }
 }
