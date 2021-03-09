@@ -114,7 +114,8 @@ app.get('/api/v1/clients', handleAsync(async (req, res) => {
 
 app.post('/api/v1/clients', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageClients);
-    // TODO
+    const id = await sql.addClient(req.body.mqttId, req.body.name);
+    res.json({status: "OK", id: id});
 }));
 
 app.get('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
@@ -129,12 +130,14 @@ app.get('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
 
 app.put('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageClients);
-    // TODO
+    await sql.updateClient(parseInt(req.params.clientId), req.body.mqttId, req.body.name);
+    res.json({status: "OK"});
 }));
 
 app.delete('/api/v1/clients/:clientId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageClients);
-    // TODO
+    await sql.deleteClient(parseInt(req.params.clientId));
+    res.json({status: "OK"});
 }));
 
 // ----------------------
@@ -146,7 +149,8 @@ app.get('/api/v1/clients/:clientId/sensors', handleAsync(async (req, res) => {
 
 app.post('/api/v1/sensors', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
-    // TODO
+    const id = await sql.addSensor(req.body.clientId, req.body.sensorType, req.body.valueType);
+    res.json({status: "OK", id: id});
 }));
 
 app.get('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
@@ -161,19 +165,24 @@ app.get('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
 
 app.put('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
-    // TODO
+    await sql.updateSensor(parseInt(req.params.sensorId), req.body.clientId, req.body.sensorType, req.body.valueType);
+    res.json({status: "OK"});
 }));
 
 app.delete('/api/v1/sensors/:sensorId', handleAsync(async (req, res) => {
     requirePermission(req, constants.permission.manageSensors);
-    // TODO
+    await sql.deleteSensor(parseInt(req.params.sensorId));
+    res.json({status: "OK"});
 }));
 
 // ----------------------
 // Data
 
-app.get('/api/v1/data/:sensorId', handleAsync(async (req, res) => {
+app.get('/api/v1/sensors/:sensorId/data', handleAsync(async (req, res) => {
+    const from = new Date(parseInt(req.query.from));
+    const to = new Date(parseInt(req.query.to));
 
+    res.json(await sql.getData(req.params.sensorId, from, to));
 }));
 
 // ----------------------
