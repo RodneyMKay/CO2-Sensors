@@ -149,11 +149,17 @@ module.exports = {
         return queryOne('SELECT * FROM client WHERE id = ?', clientId);
     },
     addClient: async function (mqttId, name) {
-        return await updateOne("INSERT INTO client (mqttId, name) VALUES (?, ?)", mqttId, name);
+        return await updateOne('INSERT INTO client (mqttId, name) VALUES (?, ?)', mqttId, name);
     },
     getClientId: function (mqttId) {
         return queryOne('SELECT id FROM client WHERE mqttId = ?', mqttId)
             .then(row => (row === null ? null : row.id));
+    },
+    updateClient: function (clientId, mqttId, name) {
+        return updateOne('UPDATE client SET mqttId = ?, name = ? WHERE id = ?', mqttId, name, clientId);
+    },
+    deleteClient: function (clientId) {
+        return updateOne('DELETE FROM client WHERE id = ?', clientId);
     },
     // ----------------------
     // Sensor
@@ -163,9 +169,18 @@ module.exports = {
     getSensor: function (sensorId) {
         return queryOne('SELECT * FROM sensor WHERE id = ?', sensorId);
     },
+    addSensor: async function (clientId, sensorType, valueType) {
+        return await updateOne('INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)', clientId, sensorType, valueType);
+    },
     getSensorId: function (clientId, sensorType, valueType) {
         return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND valueType = ?', clientId, sensorType, valueType)
             .then(row => (row === null ? null : row.id));
+    },
+    updateSensor: function (sensorId, clientId, sensorType, valueType) {
+        return updateOne('UPDATE sensor SET clientId = ?, sensorType = ?, valueType = ? WHERE id = ?', clientId, sensorType, valueType, sensorId);
+    },
+    deleteSensor: function (sensorId) {
+        return updateOne('DELETE FROM sensor WHERE id = ?', sensorId);
     },
     // ----------------------
     // Data
