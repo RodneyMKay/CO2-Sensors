@@ -96,7 +96,7 @@ module.exports = {
             db.run("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(128) NOT NUll, password VARCHAR(128) NOT NULL, permissions INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttId INTEGER, name VARCHAR(256) NOT NULL)");
             db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorType INTEGER, valueType INTEGER)");
-            db.run("CREATE TABLE IF NOT EXISTS data (sensorId INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(sensorId, time))");
+            db.run("CREATE TABLE IF NOT EXISTS data (sensorId INTEGER, time INTEGER, value FLOAT, PRIMARY KEY(sensorId, time))");
         });
     },
     deleteTables: function () {
@@ -184,10 +184,10 @@ module.exports = {
     },
     // ----------------------
     // Data
-    getData: function (sensorId, ) {
-
+    getData: function (sensorId, from, to) {
+        return queryMultiple('SELECT time, value FROM data WHERE sensorId = ? AND time >= ? AND time <= ?', sensorId, from, to);
     },
     insertData: async function (sensorId, value) {
-        await queryOne('INSERT INTO data (sensorId, value) VALUES (?, ?)', sensorId, value)
+        await queryOne('INSERT INTO data (sensorId, time, value) VALUES (?, ?, ?)', sensorId, Date.now(), value)
     }
 }
