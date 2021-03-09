@@ -1,5 +1,8 @@
 <template>
-  <h1>{{ client.name }}</h1>
+  <article>
+    <h1>Sensor {{ client.name }}</h1>
+
+  </article>
 </template>
 
 <script>
@@ -10,7 +13,7 @@ export default {
   mixins: [rest],
   props: ["clientId"],
   data: () => ({
-    client: {"name": "loading..."}
+    client: {"name": "name loading..."}
   }),
   created() {
     this.get(`/api/v1/clients/${this.clientId}`).then(client => {
