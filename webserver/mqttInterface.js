@@ -84,7 +84,8 @@ function validateMessage(message) {
         if (hash === cryptoJS.HmacSHA256(data, credentials.sha256hmacSecret).toString()) {
             return message;
         } else {
-            console.log("Try dis: " + cryptoJS.HmacSHA256(data, credentials.sha256hmacSecret).toString());
+            // just for testing purposes
+            // console.log("Try dis: " + cryptoJS.HmacSHA256(data, credentials.sha256hmacSecret).toString());
         }
     }
 
