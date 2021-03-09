@@ -109,9 +109,9 @@ module.exports = {
     },
     createTestData: async function() {
         const clients = [
-            [8, 'A204'],
+            [8, '204 oben'],
             [9, 'A205'],
-            [10, 'A206'],
+            [10, '204'],
             [11, 'A207'],
             [12, 'A208']
         ];
@@ -119,12 +119,13 @@ module.exports = {
         await updateBatch("INSERT INTO client (mqttId, name) VALUES (?, ?)", clients);
 
         const sensors = [
-            [1, 1, 0],
-            [1, 1, 1],
-            [1, 2, 2],
-            [1, 2, 3],
-            [1, 2, 4],
-            [2, 1, 0]
+            [3, 1, 0],
+            [3, 1, 1],
+            [4, 3, 2],
+            [4, 3, 3],
+            [4, 3, 4],
+            [4, 3, 5],
+            [4, 3, 6]
         ];
 
         await updateBatch("INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)", sensors);
