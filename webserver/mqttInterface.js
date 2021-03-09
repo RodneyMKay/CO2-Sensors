@@ -32,14 +32,22 @@ async function handleMessage(topic, message) {
         return;
     }
 
-    const data = parseFloat(validateMessage(message));
+    const data = parseFloat(validateMessage(message.toString()));
 
     if (!data) {
-        console.log("[WARN] Invalid data received: " + data);
+        console.log("[WARN] Invalid data received: " + message);
         return;
     }
 
     const sensorId = await sql.getSensorId(clientId, sensorType, valueType);
+
+    if (!sensorId) {
+        console.log("clientId: " + clientId);
+        console.log("mqttId: " + splitTopic[1]);
+        console.log("sensorType: " + sensorType);
+        console.log("valueType: " + valueType);
+        console.log();
+    }
 
     await sql.insertData(sensorId, data);
 }
@@ -67,7 +75,7 @@ function findValueType(valueTypeName) {
 }
 
 function validateMessage(message) {
-    const splitMessage = message.toString().split("$");
+    const splitMessage = message.split("$");
 
     if (splitMessage.length === 2) {
         const data = splitMessage[0];
