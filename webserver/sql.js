@@ -119,13 +119,13 @@ module.exports = {
         await updateBatch("INSERT INTO client (mqttId, name) VALUES (?, ?)", clients);
 
         const sensors = [
-            [3, 1, 0],
             [3, 1, 1],
-            [4, 3, 2],
+            [3, 1, 2],
             [4, 3, 3],
             [4, 3, 4],
             [4, 3, 5],
-            [4, 3, 6]
+            [4, 3, 6],
+            [4, 3, 7]
         ];
 
         await updateBatch("INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)", sensors);

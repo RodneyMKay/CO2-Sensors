@@ -5,13 +5,13 @@ module.exports = {
         3: "BME680"
     },
     valueTypes: {
-        0: "eCO2ppm",
-        1: "TVOC",
-        2: "iaq",
-        3: "temp",
-        4: "hum",
-        5: "pressure",
-        6: "gas"
+        1: "eCO2ppm", // TODO change eCO2ppm to CO2 when arduinos have the new firmware with these valueTypes
+        2: "TVOC",
+        3: "iaq",
+        4: "temp",
+        5: "hum",
+        6: "pressure",
+        7: "gas"
     },
     permission: {
         manageClients: 0x01,
