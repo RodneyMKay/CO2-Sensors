@@ -1,6 +1,6 @@
 {
   "name": "co2-server-webinterface",
-  "version": "1.0.0",
+  "version": "1.0.0-ALPHA",
   "description": "Webinterface frontend files for the CO2-Sensors",
   "scripts": {
     "dev": "vue-cli-service serve",
