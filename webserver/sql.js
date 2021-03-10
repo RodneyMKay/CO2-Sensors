@@ -109,11 +109,11 @@ module.exports = {
     },
     createTestData: async function() {
         const clients = [
-            [8, '204 oben'],
-            [9, 'A205'],
-            [10, '204'],
-            [11, 'A207'],
-            [12, 'A208']
+            [8, 'nicht Zugewiesen1'],
+            [9, 'nicht Zugewiesen2'],
+            [10, '204 oben'],
+            [11, 'A204 unten'],
+            [12, 'nicht Zugewiesen3']
         ];
 
         await updateBatch("INSERT INTO client (mqttId, name) VALUES (?, ?)", clients);
