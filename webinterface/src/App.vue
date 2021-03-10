@@ -1,9 +1,9 @@
 <template>
   <div id="app" class="d-flex">
-    <Sidebar @client-selected="clientSelected($event)" />
+    <Sidebar @changeClientDisplay="clientId = $event" />
     <div id="content" class="flex-fill">
       <div class="container">
-        <ClientDisplay />
+        <ClientDisplay v-bind:client-id="clientId"/>
       </div>
     </div>
   </div>
@@ -17,10 +17,15 @@ import ClientDisplay from "@/components/ClientDisplay";
 
 export default {
   name: 'App',
-  components: {ClientDisplay, Sidebar },
+  components: {ClientDisplay, Sidebar},
+  data() {
+    return {
+      clientId: "3"
+    }
+  },
   methods: {
-    clientSelected: event => {
-      console.log(event);
+    clientSelected: data => {
+      console.log("Changing to client" + data);
     }
   }
 }

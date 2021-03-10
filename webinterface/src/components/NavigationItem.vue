@@ -1,5 +1,5 @@
 <template>
-  <li class="navigation-item" @click="$emit('click', $event)" v-bind:class="{ 'small': small, 'active': active }"><slot></slot></li>
+  <li class="navigation-item" @click="$emit('click')" v-bind:class="{ 'small': small, 'active': active }"><slot></slot></li>
 </template>
 
 <script>

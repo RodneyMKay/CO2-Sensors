@@ -11,7 +11,7 @@
     </section>
 
     <table v-if="sensors">
-      <tr><th>id</th><th>clientId</th><th>sensorType</th><th>valueType</th></tr>
+      <tr><th>id</th><th>sensorId</th><th>sensorType</th><th>valueType</th></tr>
       <tr v-for="sensor in sensors" v-bind:key="sensor.id">
         <td>{{sensor.id}}</td>
         <td>{{sensor.clientId}}</td>
@@ -50,8 +50,19 @@ export default {
       this.sensors = sensors;
     });
   },
-  mounted() {
+  watch: {
+    clientId: function (val, oldVal) {
+      oldVal
+      this.get(`/api/v1/clients/${val}`).then(client => {
+        if (client !== undefined) {
+          this.client = client;
+        }
+      });
 
+      this.get(`/api/v1/clients/${val}/sensors`).then(sensors => {
+        this.sensors = sensors;
+      });
+    }
   }, methods: {
     triggerUpdate () {
       this.updateChartsFlag = !this.updateChartsFlag;

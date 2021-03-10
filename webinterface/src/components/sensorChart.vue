@@ -32,6 +32,8 @@ export default {
   },
   mounted () {
     this.updateCharts(Date.now()-0.5*60*60*1000, Date.now());
+
+    // add scaling for charts
     let min = null;
     let max = null;
     let unit = "";
