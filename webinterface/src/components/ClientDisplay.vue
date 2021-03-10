@@ -1,7 +1,7 @@
 <template>
   <article>
     <h1>Sensor {{ client.name }}</h1>
-    <section v-on:click="updateCharts" v-if="sensors" class="tables">
+    <section v-on:click="triggerUpdate" v-if="sensors" class="tables">
       <article class="sensorchart" v-for="sensor in sensors" v-bind:key="sensor.id">
         <sensor-chart v-bind:update="updateChartsFlag" v-bind:sensor="sensor"></sensor-chart>
       </article>
@@ -35,7 +35,7 @@ export default {
   props: ["clientId"],
 
   data: () => ({
-    client: {"name": "name loading..."},
+    client: {"name": "name loading...", "mqttId": null, "id": null},
     sensors: null,
     updateChartsFlag: true
   }),
@@ -54,7 +54,7 @@ export default {
   mounted() {
 
   }, methods: {
-    updateCharts () {
+    triggerUpdate () {
       this.updateChartsFlag = !this.updateChartsFlag;
     }
   }
