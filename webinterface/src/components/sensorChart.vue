@@ -49,7 +49,7 @@ export default {
       unit = "IAQ";
     } else if (this.sensor.valueType === 3) {
       min = 0;
-      max = 40;
+      max = 100;
       unit = "°C";
     } else if (this.sensor.valueType === 4) {
       min = 0;
