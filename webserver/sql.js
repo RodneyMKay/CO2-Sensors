@@ -68,6 +68,25 @@ async function queryOne(sql, ...params) {
     });
 }
 
+/**
+ * Utility method for database operations. Prepares and executes the specified sql statement. The specified params
+ * are bound to the statement. This method is for inserting new data into a database or deleting them. The object
+ * resulting from the promise represents the last updated row id.
+ *
+ * @param sql sql statement to use for this query
+ * @param params parameters bound to the sql statement
+ * @returns {Promise<int>} object describing the fetched row
+ */
+function updateOne(sql, ...params) {
+    return new Promise((resolve, reject) => {
+        const statement = db.prepare(sql);
+        statement.run(params, err => {
+            if (err) reject(err);
+            else resolve(statement.lastID);
+        });
+    });
+}
+
 module.exports = {
     init: function () {
         db = new sqlite.Database(config.databaseFile);
@@ -77,7 +96,7 @@ module.exports = {
             db.run("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR(128) NOT NUll, password VARCHAR(128) NOT NULL, permissions INTEGER)");
             db.run("CREATE TABLE IF NOT EXISTS client (id INTEGER PRIMARY KEY AUTOINCREMENT, mqttId INTEGER, name VARCHAR(256) NOT NULL)");
             db.run("CREATE TABLE IF NOT EXISTS sensor (id INTEGER PRIMARY KEY AUTOINCREMENT, clientId INTEGER, sensorType INTEGER, valueType INTEGER)");
-            db.run("CREATE TABLE IF NOT EXISTS data (sensorId INTEGER, time DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')), value FLOAT, PRIMARY KEY(sensorId, time))");
+            db.run("CREATE TABLE IF NOT EXISTS data (sensorId INTEGER, time INTEGER, value FLOAT, PRIMARY KEY(sensorId, time))");
         });
     },
     deleteTables: function () {
@@ -90,9 +109,9 @@ module.exports = {
     },
     createTestData: async function() {
         const clients = [
-            [8, 'A204'],
+            [8, '204 oben'],
             [9, 'A205'],
-            [10, 'A206'],
+            [10, '204'],
             [11, 'A207'],
             [12, 'A208']
         ];
@@ -100,12 +119,13 @@ module.exports = {
         await updateBatch("INSERT INTO client (mqttId, name) VALUES (?, ?)", clients);
 
         const sensors = [
-            [1, 1, 0],
-            [1, 1, 1],
-            [1, 2, 2],
-            [1, 2, 3],
-            [1, 2, 4],
-            [2, 1, 0]
+            [3, 1, 0],
+            [3, 1, 1],
+            [4, 3, 2],
+            [4, 3, 3],
+            [4, 3, 4],
+            [4, 3, 5],
+            [4, 3, 6]
         ];
 
         await updateBatch("INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)", sensors);
@@ -116,33 +136,59 @@ module.exports = {
 
         await updateBatch("INSERT INTO user (username, password, permissions) VALUES (?, ?, ?)", users);
     },
+    // ----------------------
+    // User
     getUser: function (username) {
-        return queryOne("SELECT * FROM user  WHERE username = ?", username);
+        return queryOne("SELECT * FROM user WHERE username = ?", username);
     },
+    // ----------------------
+    // Client
     listClients: function () {
         return queryMultiple("SELECT * FROM client");
     },
     getClient: function (clientId) {
         return queryOne('SELECT * FROM client WHERE id = ?', clientId);
     },
+    addClient: async function (mqttId, name) {
+        return await updateOne('INSERT INTO client (mqttId, name) VALUES (?, ?)', mqttId, name);
+    },
     getClientId: function (mqttId) {
         return queryOne('SELECT id FROM client WHERE mqttId = ?', mqttId)
             .then(row => (row === null ? null : row.id));
     },
+    updateClient: function (clientId, mqttId, name) {
+        return updateOne('UPDATE client SET mqttId = ?, name = ? WHERE id = ?', mqttId, name, clientId);
+    },
+    deleteClient: function (clientId) {
+        return updateOne('DELETE FROM client WHERE id = ?', clientId);
+    },
+    // ----------------------
+    // Sensor
     listSensors: function (clientId) {
         return queryMultiple('SELECT * FROM sensor WHERE clientId = ?', clientId);
     },
     getSensor: function (sensorId) {
         return queryOne('SELECT * FROM sensor WHERE id = ?', sensorId);
     },
+    addSensor: async function (clientId, sensorType, valueType) {
+        return await updateOne('INSERT INTO sensor (clientId, sensorType, valueType) VALUES (?, ?, ?)', clientId, sensorType, valueType);
+    },
     getSensorId: function (clientId, sensorType, valueType) {
         return queryOne('SELECT id FROM sensor WHERE clientId = ? AND sensorType = ? AND valueType = ?', clientId, sensorType, valueType)
             .then(row => (row === null ? null : row.id));
     },
-    getData: function (sensorId, ) {
-
+    updateSensor: function (sensorId, clientId, sensorType, valueType) {
+        return updateOne('UPDATE sensor SET clientId = ?, sensorType = ?, valueType = ? WHERE id = ?', clientId, sensorType, valueType, sensorId);
+    },
+    deleteSensor: function (sensorId) {
+        return updateOne('DELETE FROM sensor WHERE id = ?', sensorId);
+    },
+    // ----------------------
+    // Data
+    getData: function (sensorId, from, to) {
+        return queryMultiple('SELECT time, value FROM data WHERE sensorId = ? AND time >= ? AND time <= ?', sensorId, from, to);
     },
     insertData: async function (sensorId, value) {
-        await queryOne('INSERT INTO data (sensorId, value) VALUES (?, ?)', sensorId, value)
+        await queryOne('INSERT INTO data (sensorId, time, value) VALUES (?, ?, ?)', sensorId, Date.now(), value)
     }
 }
