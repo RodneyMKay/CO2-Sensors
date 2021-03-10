@@ -1,5 +1,5 @@
 <script>
-import rest from "@/mixins/rest"
+//import rest from "@/mixins/rest"
 import { Line, mixins } from 'vue-chartjs'
 const {reactiveData} = mixins;
 
@@ -24,6 +24,8 @@ export default {
   },
   watch: {
     update: function (val, oldVal) {
+      val
+      oldVal
       this.fillData()
     }
   },
