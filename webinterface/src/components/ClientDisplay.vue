@@ -42,13 +42,12 @@ export default {
   created() {
     this.get(`/api/v1/clients/${this.clientId}`).then(client => {
       if (client !== undefined) {
-        this.client = {"name": client.name};
-        return client.name;
+        this.client = client;
       }
     });
 
-    this.get(`/api/v1/clients/${this.clientId}/sensors`).then(res => {
-      this.sensors = res;
+    this.get(`/api/v1/clients/${this.clientId}/sensors`).then(sensors => {
+      this.sensors = sensors;
     });
   },
   mounted() {
