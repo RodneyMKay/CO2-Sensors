@@ -1,6 +1,7 @@
 <script>
 import rest from "@/mixins/rest"
 import { Line, mixins } from 'vue-chartjs'
+import constants from "@/constants"
 const {reactiveData} = mixins;
 
 export default {
@@ -97,11 +98,15 @@ export default {
           labels.push(data[i].time)
           values.push(data[i].value)
         }
+
+        let label = constants.valueTypes[this.sensor.valueType]
+        if (label === undefined) label = "unknown valueType"
+
         this.chartData = {
           labels: labels,
           datasets: [
             {
-              label: "valueType" + this.sensor.valueType,
+              label: label,
               backgroundColor: 'rgba(' + this.getRandomInt(100, 255) +  ', ' + this.getRandomInt(100, 255) +  ', ' + this.getRandomInt(100, 255) +  ')',
               data: values
             }
