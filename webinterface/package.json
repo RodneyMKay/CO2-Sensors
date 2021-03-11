@@ -1,6 +1,6 @@
 {
   "name": "co2-server-webinterface",
-  "version": "1.0.0-ALPHA",
+  "version": "1.0.1-ALPHA",
   "description": "Webinterface frontend files for the CO2-Sensors",
   "scripts": {
     "dev": "vue-cli-service serve",
@@ -21,7 +21,9 @@
     "bootstrap": "^4.6.0",
     "bootstrap-icons": "^1.4.0",
     "core-js": "^3.6.5",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "chart.js": "^2.9.4",
+    "vue-chartjs": "^3.5.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -1,6 +1,6 @@
 {
   "name": "co2-server-webserver",
-  "version": "1.0.0-ALPHA",
+  "version": "1.0.1-ALPHA",
   "description": "Webserver for serving the webinterface for the CO2-Sensors",
   "scripts": {
     "build": "npm run build --prefix ../webinterface",
@@ -19,14 +19,12 @@
   "homepage": "https://github.com/RodneyMKay/CO2-Sensors#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "chart.js": "^2.9.4",
     "crypto-js": "^4.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "mqtt": "^4.2.6",
     "path": "^0.12.7",
-    "sqlite3": "^5.0.2",
-    "vue-chartjs": "^3.5.1"
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
