@@ -1,6 +1,6 @@
 {
   "name": "co2-server-webserver",
-  "version": "1.0.1-ALPHA",
+  "version": "1.0.2-ALPHA",
   "description": "Webserver for serving the webinterface for the CO2-Sensors",
   "scripts": {
     "build": "npm run build --prefix ../webinterface",
