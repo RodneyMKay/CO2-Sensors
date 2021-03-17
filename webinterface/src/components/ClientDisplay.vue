@@ -1,10 +1,26 @@
 <template>
   <article>
-    <h1>Sensor {{ client.name }}</h1>
-    <section v-on:click="triggerUpdate" v-if="sensors" class="tables">
+    <section class="header">
+      <h1 class="headline">Sensor {{ client.name }}</h1>
+      <section class="options">
+        <select>
+          <option>10s</option>
+          <option>15s</option>
+          <option>20s</option>
+          <option>30s</option>
+          <option>1m</option>
+          <option>5m</option>
+
+        </select>
+        <button v-on:click="triggerUpdate">update Data</button>
+      </section>
+    </section>
+
+    <section v-if="sensors" class="charts">
       <article class="sensorchart" v-for="sensor in sensors" v-bind:key="sensor.id">
         <sensor-chart v-bind:update="updateChartsFlag" v-bind:sensor="sensor"></sensor-chart>
       </article>
+
     </section>
     <section v-else>
       <p>hier gibts keine Charts</p>
@@ -87,5 +103,24 @@ td {
 .sensorchart {
   width: 30em;
   display: inline-flex;
+}
+
+.header {
+  margin-top: 0.5em;
+}
+
+.headline {
+  display: inline;
+}
+
+.options {
+  float: right;
+  background: #0a538f;
+  padding: 0.5em;
+  display: inline;
+}
+.charts {
+  display: inline-block;
+  width: 100%;
 }
 </style>
