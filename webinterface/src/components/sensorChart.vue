@@ -103,7 +103,7 @@ export default {
         if (label === undefined) label = "unknown valueType"
 
         this.chartData = {
-          labels: labels,
+          labels: this.timestampsToTime(labels),
           datasets: [
             {
               label: label,
@@ -116,6 +116,19 @@ export default {
     },
     getRandomInt (start, end) {
       return Math.floor(Math.random() * (end-start)) + start
+    },
+    timestampsToTime(timestamps) {
+      let formattedTimestamps = []
+      let date;
+      let hours;
+      let minutes;
+      timestamps.forEach((timestamp) => {
+        date = new Date(timestamp);
+        hours = date.getHours();
+        minutes = date.getMinutes();
+        formattedTimestamps.push(`${hours}:${minutes}`)
+      })
+      return formattedTimestamps;
     }
   }
 }
