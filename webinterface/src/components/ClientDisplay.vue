@@ -25,16 +25,6 @@
     <section v-else>
       <p>hier gibts keine Charts</p>
     </section>
-
-    <table v-if="sensors">
-      <tr><th>id</th><th>sensorId</th><th>sensorType</th><th>valueType</th></tr>
-      <tr v-for="sensor in sensors" v-bind:key="sensor.id">
-        <td>{{sensor.id}}</td>
-        <td>{{sensor.clientId}}</td>
-        <td>{{sensor.sensorType}}</td>
-        <td>{{sensor.valueType}}</td>
-      </tr>
-    </table>
   </article>
 </template>
 
