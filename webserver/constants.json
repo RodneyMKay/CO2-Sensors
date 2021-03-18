@@ -1,0 +1,24 @@
+{
+  "sensorTypes": [
+    {"id": 1, "name": "CCS811"},
+    {"id": 2, "name": "BME280"},
+    {"id": 3, "name": "BME680"},
+    {"id": 4, "name": "MH-z19"}
+  ],
+  "valueTypes": [
+    {"id": 1, "name": "eCO2ppm", "unit": "ppm", "description": "Estimated CO2"},
+    {"id": 2, "name": "TVOC", "unit": null, "description": "Total Volatile Organic Compounds (air quality)"},
+    {"id": 3, "name": "iaq", "unit": null, "description": "Indoor Air Quality"},
+    {"id": 4, "name": "temp", "unit": "°C", "description": "A temperature"},
+    {"id": 5, "name": "hum", "unit": "%", "description": "Air humidity"},
+    {"id": 6, "name": "pressure", "unit": "hPa", "description": "Current air-pressure (aka mBar)"},
+    {"id": 7, "name": "gas", "unit": null, "description": "Actually it's Ω but ¯\\(ツ)/¯"},
+    {"id": 8, "name": "CO2", "unit": "ppm", "description": "'Real' CO2"}
+  ],
+  "permissions": {
+    "manageClients": {"mask": 1, "name": "Manage Clients"},
+    "manageSensors": {"mask": 2, "name": "Manage Sensors"},
+    "manageUsers": {"mask": 4, "name": "Manage Users"},
+    "globalSettings": {"mask": 8, "name": "Edit Global Settings"}
+  }
+}

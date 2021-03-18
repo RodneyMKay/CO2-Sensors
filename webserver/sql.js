@@ -1,6 +1,6 @@
 const sqlite = require('sqlite3');
 
-const config = require('./config');
+const config = require('./config.json');
 
 let db = null;
 

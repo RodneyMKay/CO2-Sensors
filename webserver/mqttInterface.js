@@ -1,9 +1,9 @@
 const mqtt = require('mqtt');
 const cryptoJS = require('crypto-js');
 
-const config = require('./config');
-const constants = require('./constants');
-const credentials = require('./credentials');
+const config = require('./config.json');
+const constants = require('./constants.json');
+const credentials = require('./credentials.json');
 const sql = require('./sql');
 
 async function handleMessage(topic, message) {
@@ -55,22 +55,26 @@ async function handleMessage(topic, message) {
 function findSensorType(typeName) {
     let sensorTypeId = null;
 
-    for (const [key, value] of Object.entries(constants.sensorTypes)) {
-        if (value.toLowerCase() === typeName.toLowerCase()) {
-            sensorTypeId = key;
+    for (const sensorType of constants.sensorTypes) {
+        if (sensorType.name.toLowerCase() === typeName.toLowerCase()) {
+            sensorTypeId = sensorType.id;
+            break;
         }
     }
+
     return sensorTypeId;
 }
 
 function findValueType(valueTypeName) {
     let valueTypeId = null;
 
-    for (const [key, value] of Object.entries(constants.valueTypes)) {
-        if (value.toLowerCase() === valueTypeName.toLowerCase()) {
-            valueTypeId = key;
+    for (const valueType of constants.valueTypes) {
+        if (valueType.name.toLowerCase() === valueTypeName.toLowerCase()) {
+            valueTypeId = valueType.id;
+            break;
         }
     }
+
     return valueTypeId;
 }
 

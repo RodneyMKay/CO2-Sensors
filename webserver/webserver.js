@@ -3,9 +3,9 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-const config = require('./config');
-const constants = require('./constants');
-const credentials = require('./credentials');
+const config = require('./config.json');
+const constants = require('./constants.json');
+const credentials = require('./credentials.json');
 const sql = require('./sql');
 
 /**
@@ -71,6 +71,7 @@ app.use('/api/v1/*', session({
 // Static files
 
 app.use('/', express.static(path.join(__dirname, '../webinterface/dist/')));
+app.use('/constants.json', express.static('constants.json'));
 
 // ----------------------
 // Auth api
