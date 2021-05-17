@@ -1,5 +1,5 @@
 # CO2-Sensors
-This is the project that encompasses the [software for the CO2-Sensors](https://github.com/Cast39/FLS-eCO2-Sensor-Firmware) of the Friedrich-List-Schule. This is a mint project created by students to detect bad air in the school rooms and ensure that the windows are opened regularly.
+This is the project that encompasses the [firmware for the CO2-Sensors](https://github.com/Cast39/FLS-CO2-Sensor-Firmware) of the Friedrich-List-Schule. This is a mint project created by students to detect bad air in the school rooms and ensure that the windows are opened regularly.
 
 Documentation: [GitHub Wiki](https://github.com/RodneyMKay/CO2-Sensors/wiki)
 
